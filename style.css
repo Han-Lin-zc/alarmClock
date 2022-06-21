@@ -150,8 +150,7 @@ main{
   #clock{
       font-size: 30px;
   }
-          /* Alarm Input Element Styles */
-
+  /* Alarm Input Element Styles */
   /* time input field */
   #alarm_input{
       font-size: 0.9rem;
