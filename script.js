@@ -3,7 +3,7 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 var timer =[];
 var i = 0;
 var alarms_ul = document.getElementById('alarms_ul');
-let ringtone = new Audio("./files/ringtone.mp3");
+let ringtone = new Audio("./files/ringtone.wav");
 
 // Display clock function //
 let displayClock = () => {
@@ -38,11 +38,8 @@ let setAlarm = () => {
             displayAlarms(alarm_time);
             // console.log("remaining time in seconds",duration/1000);
             timer[i++] = setTimeout(() => {
-            alert('Times up');
+            ringtone.loop = false;
             ringtone.play();
-            console.log("Alarm Deleted");
-             // remove the alarm from dom
-             document.getElementById(alarm_time).remove();
              i--;
             },duration);
         }
