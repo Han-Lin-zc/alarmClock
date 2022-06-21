@@ -29,7 +29,7 @@ setInterval(() => {
     s = s < 10 ? "0" + s : s;
     currentTime.innerText = `${h}:${m}:${s}`;
 
-    if (alarmTime === `${h}:${m} ${ampm}`) {
+    if (alarmTime === `${h}:${m}`) {
         ringtone.play();
         ringtone.loop = true;
     }
