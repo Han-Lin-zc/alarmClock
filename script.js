@@ -1,57 +1,109 @@
-const currentTime = document.querySelector("h1"),
-content = document.querySelector(".content"),
-selectMenu = document.querySelectorAll("select"),
-setAlarmBtn = document.querySelector("button");
+// Global variables and objects //
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var timer =[];
+var i = 0;
+var alarms_ul = document.getElementById('alarms_ul');
+let ringtone = new Audio("./files/ringtone.mp3");
 
-let alarmTime, isAlarmSet,
-ringtone = new Audio("./files/ringtone.mp3");
-
-for (let i = 24; i > 0; i--) {
-    i = i < 10 ? `0${i}` : i;
-    let option = `<option value="${i}">${i}</option>`;
-    selectMenu[0].firstElementChild.insertAdjacentHTML("afterend", option);
+// Display clock function //
+let displayClock = () => {
+    let today = new Date();
+    let hours = today.getHours();
+    let minutes = today.getMinutes();
+    let seconds = today.getSeconds();
+    let clock = document.getElementById('clock');
+    let currentHour = hours < 10 ? '0' + hours : hours ;
+    //Insert current time to the clock div as innerHTML
+    clock.innerHTML = `
+    ${hours > 24 ? hours - 24 : currentHour } : 
+    ${minutes < 10 ? '0' + minutes : minutes} : 
+    ${seconds < 10 ? '0' + seconds : seconds}
+    `;
+    //create a setTimeout to call displayClock function for Working Clock Display
+    setTimeout(displayClock,1000);
 }
 
-for (let i = 59; i >= 0; i--) {
-    i = i < 10 ? `0${i}` : i;
-    let option = `<option value="${i}">${i}</option>`;
-    selectMenu[1].firstElementChild.insertAdjacentHTML("afterend", option);
-}
-
-setInterval(() => {
-    let date = new Date(),
-    h = date.getHours(),
-    m = date.getMinutes(),
-    s = date.getSeconds()
-
-    h = h < 10 ? "0" + h : h;
-    m = m < 10 ? "0" + m : m;
-    s = s < 10 ? "0" + s : s;
-    currentTime.innerText = `${h}:${m}:${s}`;
-
-    if (alarmTime === `${h}:${m}`) {
-        ringtone.play();
-        ringtone.loop = true;
+let setAlarm = () => {
+    let alarmsInput = document.getElementById('alarm_input');
+    let alarm = alarmsInput.value;
+    alarmsInput.value="";
+    if(alarm!==""){
+        let curr_time = new Date();
+        //create alarm_time object
+        let alarm_time = new Date(alarm);
+        let duration = alarm_time - curr_time ;
+        if(duration < 0){
+            alert('Time has already passed');
+        }else{
+            displayAlarms(alarm_time);
+            // console.log("remaining time in seconds",duration/1000);
+            timer[i++] = setTimeout(() => {
+            alert('Times up');
+            ringtone.play();
+            console.log("Alarm Deleted");
+             // remove the alarm from dom
+             document.getElementById(alarm_time).remove();
+             i--;
+            },duration);
+        }
+    }else{
+        alert('Select Alarm Time !!!')
     }
+}
+
+// Display Alarm List //
+let displayAlarms = (time) => {
+    
+    //clear alarms_ul innerHTml to avoid already appened duplicated lists everytime a new alarm is added
+    // create necessary variables for every alarm_time object in the array ...
+    let alarmTime = time;
+    let hours = alarmTime.getHours();
+    let minutes = alarmTime.getMinutes();
+    let seconds = alarmTime.getSeconds();
+    //create newLi tag to append to the alarms List
+    let newLi = document.createElement('li');
+    newLi.className = "alarms-li";
+    newLi.id= time;
+    newLi.innerHTML = `
+    <span class="fa-li"><i class="fas fa-bell fa-2x"></i></span>
+    ${months[alarmTime.getMonth()]}
+    ${alarmTime.getDate()} 
+    @ 
+    ${hours<10 ? "0"+ hours : hours }:
+    ${minutes<10 ? "0"+ minutes : minutes }:
+    ${seconds<10 ? "0"+ seconds : seconds }
+    <button  type="submit" onClick={deleteAlarm(${i})} class='deleteAlarm button'>Delete</button>    
+    `;
+    alarms_ul.appendChild(newLi);
+}
+
+//Delete Alarm function
+let deleteAlarm = (index)=> {
+   
+    clearInterval(timer[index]);    
+ 
+}
+
+function removeAlarm(el){
+    // console.log(el);
+    if(el.classList.contains('deleteAlarm')){
+      el.parentElement.remove();
+    }
+}
+//  Handle Events // 
+
+//Hanlde DisplayClock
+document.addEventListener('DOMContentLoaded ',displayClock());
+
+//handle Add Alarm
+document.querySelector('#submit_alarm_time').addEventListener('click',(e)=>{
+    e.preventDefault();
+    //Call setAlarm function
+    setAlarm();
 });
 
-function setAlarm() {
-    if (isAlarmSet) {
-        alarmTime = "";
-        ringtone.pause();
-        content.classList.remove("disable");
-        setAlarmBtn.innerText = "Set Alarm";
-        return isAlarmSet = false;
-    }
+//handle delete alarm event for removing the li from thelist
+document.getElementById('alarms_ul').addEventListener('click',(e)=>{
 
-    let time = `${selectMenu[0].value}:${selectMenu[1].value}`;
-    if (time.includes("Hour") || time.includes("Minute")) {
-        return alert("Please, select a valid time to set Alarm!");
-    }
-    alarmTime = time;
-    isAlarmSet = true;
-    content.classList.add("disable");
-    setAlarmBtn.innerText = "Clear Alarm";
-}
-
-setAlarmBtn.addEventListener("click", setAlarm);
+    removeAlarm(e.target); 
+})
