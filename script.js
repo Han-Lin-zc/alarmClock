@@ -27,7 +27,7 @@ setInterval(() => {
     h = h < 10 ? "0" + h : h;
     m = m < 10 ? "0" + m : m;
     s = s < 10 ? "0" + s : s;
-    currentTime.innerText = `${h}:${m}:${s} ${ampm}`;
+    currentTime.innerText = `${h}:${m}:${s}`;
 
     if (alarmTime === `${h}:${m} ${ampm}`) {
         ringtone.play();
@@ -44,8 +44,8 @@ function setAlarm() {
         return isAlarmSet = false;
     }
 
-    let time = `${selectMenu[0].value}:${selectMenu[1].value} ${selectMenu[2].value}`;
-    if (time.includes("Hour") || time.includes("Minute") || time.includes("AM/PM")) {
+    let time = `${selectMenu[0].value}:${selectMenu[1].value}`;
+    if (time.includes("Hour") || time.includes("Minute")) {
         return alert("Please, select a valid time to set Alarm!");
     }
     alarmTime = time;
