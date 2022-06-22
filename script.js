@@ -34,7 +34,7 @@ let setAlarm = () => {
         let duration = alarm_time - curr_time ;
         if(duration < 0){
             alert('Time has already passed');
-        }else{
+        } else {
             displayAlarms(alarm_time);
             // console.log("remaining time in seconds",duration/1000);
             timer[i++] = setTimeout(() => {
@@ -43,7 +43,7 @@ let setAlarm = () => {
              i--;
             },duration);
         }
-    }else{
+    } else {
         alert('Select Alarm Time !!!')
     }
 }
